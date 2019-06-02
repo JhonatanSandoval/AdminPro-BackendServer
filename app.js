@@ -1,12 +1,17 @@
 // requires
 const express = require('express')
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+
 
 // variables
 let app = express()
-const dbName = 'hospitalDB'
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 
 // db connection
+const dbName = 'hospitalDB'
 mongoose
   .connection
   .openUri('mongodb://localhost:27017/' + dbName,
@@ -18,14 +23,14 @@ mongoose
 
 
 // routes
-app.get('/', (req, res, next) => {
-  res
-    .status(200)
-    .json({
-      success: true,
-      mensaje: 'Petición realizada correctamente '
-    })
-})
+const appRoutes = require('./routes/app')
+app.use('/', appRoutes)
+
+const usuarioRoutes = require('./routes/usuario')
+app.use('/usuarios', usuarioRoutes)
+
+const loginRoutes = require('./routes/login')
+app.use('/login', loginRoutes)
 
 // listen/open server
 const port = 3000
