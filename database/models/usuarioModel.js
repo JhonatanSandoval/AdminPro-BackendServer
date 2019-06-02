@@ -12,7 +12,7 @@ let usuarioSchema = mongoose.Schema({
   password: { type: String, required: [true, 'El password es necesario'] },
   img: { type: String, required: false },
   role: { type: String, required: true, default: 'USER_ROLE', enum: rolesValidos }
-})
+}, { collection: 'usuarios' })
 usuarioSchema.plugin(uniqueValidator, { message: 'El correo debe de ser único' })
 
 module.exports = mongoose.model('Usuario', usuarioSchema)

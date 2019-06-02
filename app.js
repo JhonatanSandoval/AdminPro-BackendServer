@@ -32,6 +32,12 @@ app.use('/usuarios', usuarioRoutes)
 const loginRoutes = require('./routes/login')
 app.use('/login', loginRoutes)
 
+const hospitalRoutes = require('./routes/hospital')
+app.use('/hospitales', hospitalRoutes)
+
+const medicoRoutes = require('./routes/medico')
+app.use('/medicos', medicoRoutes)
+
 // listen/open server
 const port = 3000
 app.listen(port, () => {

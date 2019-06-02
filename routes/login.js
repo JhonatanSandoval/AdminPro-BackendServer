@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const app = express()
-const usuarioModel = require('../database/models/usuario')
+const usuarioModel = require('../database/models/usuarioModel')
 
 const configJwt = require('../config/jwt')
 

@@ -2,7 +2,7 @@ const express = require('express')
 const bcrypt = require('bcryptjs')
 
 const app = express()
-const usuarioModel = require('../database/models/usuario')
+const usuarioModel = require('../database/models/usuarioModel')
 
 const authMiddleware = require('../middlewares/auth')
 
