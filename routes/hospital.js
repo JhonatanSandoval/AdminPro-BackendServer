@@ -8,15 +8,28 @@ const authMiddleware = require('../middlewares/auth')
  * Obtener hospitales
  */
 app.get('/', (req, res, next) => {
-    hospitalModel.find({}, (err, hospitales) => {
-        if (err) return res.status(500).json({ success: false, mensaje: 'Error al cargar los hospitales', err })
-        return res
-            .status(200)
-            .json({
-                success: true,
-                hospitales
+    let desde = req.query.desde || 0
+    desde = Number(desde)
+
+    hospitalModel
+        .find({})
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email')
+        .exec((err, hospitales) => {
+            if (err) return res.status(500).json({ success: false, mensaje: 'Error al cargar los hospitales', err })
+
+            hospitalModel.count({}, (err, conteo) => {
+                return res
+                    .status(200)
+                    .json({
+                        success: true,
+                        total: conteo,
+                        hospitales
+                    })
             })
-    })
+
+        })
 })
 
 /**

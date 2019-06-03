@@ -38,6 +38,16 @@ app.use('/hospitales', hospitalRoutes)
 const medicoRoutes = require('./routes/medico')
 app.use('/medicos', medicoRoutes)
 
+const busquedaRoutes = require('./routes/busqueda')
+app.use('/busqueda', busquedaRoutes)
+
+const uploadRoutes = require('./routes/upload')
+app.use('/upload', uploadRoutes)
+
+const imgsRoutes = require('./routes/imagenes')
+app.use('/img', imgsRoutes)
+
+
 // listen/open server
 const port = 3000
 app.listen(port, () => {

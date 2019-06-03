@@ -8,15 +8,28 @@ const authMiddleware = require('../middlewares/auth')
  * Obtener medicos
  */
 app.get('/', (req, res, next) => {
-    medicoModel.find({}, (err, medicos) => {
-        if (err) return res.status(500).json({ success: false, mensaje: 'Error al cargar los medicos', err })
-        return res
-            .status(200)
-            .json({
-                success: true,
-                medicos
+    let desde = req.query.desde || 0
+    desde = Number(desde)
+
+    medicoModel
+        .find({})
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email')
+        .populate('hospital')
+        .exec((err, medicos) => {
+            if (err) return res.status(500).json({ success: false, mensaje: 'Error al cargar los medicos', err })
+
+            medicoModel.count({}, (err, conteo) => {
+                return res
+                    .status(200)
+                    .json({
+                        success: true,
+                        total: conteo,
+                        medicos
+                    })
             })
-    })
+        })
 })
 
 /**

@@ -10,16 +10,26 @@ const authMiddleware = require('../middlewares/auth')
  * Obtener todos los usuarios
  */
 app.get('/', (req, res, next) => {
-	usuarioModel.find({}, (err, usuarios) => {
-		if (err) return res.status(500).json({ success: false, mensaje: 'Error al cargar usuarios', err })
+	let desde = req.query.desde || 0
+	desde = Number(desde)
 
-		return res
-			.status(200)
-			.json({
-				success: true,
-				usuarios: usuarios
+	usuarioModel.find({})
+		.skip(desde)
+		.limit(5)
+		.exec((err, usuarios) => {
+			if (err) return res.status(500).json({ success: false, mensaje: 'Error al cargar usuarios', err })
+
+			usuarioModel.count({}, (err, conteo) => {
+				return res
+					.status(200)
+					.json({
+						success: true,
+						total: conteo,
+						usuarios
+					})
 			})
-	})
+
+		})
 })
 
 /**
