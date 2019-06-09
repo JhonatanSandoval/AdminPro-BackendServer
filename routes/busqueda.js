@@ -74,7 +74,7 @@ let buscarHospitales = (regex) => {
     return new Promise((resolve, reject) => {
         hospitalModel
             .find({ nombre: regex })
-            .populate('usuario', 'nombre email')
+            .populate('usuario', 'nombre email img')
             .exec((err, hospitales) => {
                 if (err) reject('Error al cargar hospitales', err)
                 resolve(hospitales)
@@ -86,8 +86,8 @@ let buscarMedicos = (regex) => {
     return new Promise((resolve, reject) => {
         medicoModel
             .find({ nombre: regex })
-            .populate('hospital', 'nombre')
-            .populate('usuario', 'nombre email')
+            .populate('hospital', 'nombre img')
+            .populate('usuario', 'nombre email img')
             .exec((err, medicos) => {
                 if (err) reject('Error al cargar medicos', err)
                 resolve(medicos)
@@ -98,7 +98,7 @@ let buscarMedicos = (regex) => {
 let buscarUsuarios = (regex) => {
     return new Promise((resolve, reject) => {
         usuarioModel
-            .find({}, 'nombre email role')
+            .find({}, 'nombre email role img')
             .or([
                 { nombre: regex },
                 { email: regex }

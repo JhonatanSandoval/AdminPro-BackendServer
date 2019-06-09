@@ -69,7 +69,7 @@ app.post('/:tabla/:id', (req, res, next) => {
 let subirPorTabla = (tabla, _id, nombreArchivo, res) => {
     if (tabla === 'usuarios') {
         usuarioModel.findById(_id, (err, usuario) => {
-            validarYeliminarImagen('./uploads/usuarios/' + usuario.img)
+            validarYeliminarImagen('../uploads/usuarios/' + usuario.img)
             usuario.img = nombreArchivo
             usuario.save((err, usuarioActualizado) => {
                 if (err) return res.status(500).json({
@@ -89,9 +89,9 @@ let subirPorTabla = (tabla, _id, nombreArchivo, res) => {
 
     if (tabla === 'medicos') {
         medicoModel.findById(_id, (err, medico) => {
-            validarYeliminarImagen('./uploads/medicos/' + medico.img)
+            validarYeliminarImagen('../uploads/medicos/' + medico.img)
             medico.img = nombreArchivo
-            medico.save((err, medicoctualizado) => {
+            medico.save((err, medicoActualizado) => {
                 if (err) return res.status(500).json({
                     success: false,
                     mensaje: 'Ocurrió un error al actualizar la imagen del medico',
@@ -100,7 +100,7 @@ let subirPorTabla = (tabla, _id, nombreArchivo, res) => {
                 return res.status(200).json({
                     success: true,
                     mensaje: 'Medico actualizado',
-                    medicoctualizado
+                    medicoActualizado
                 })
             })
         })
@@ -108,9 +108,9 @@ let subirPorTabla = (tabla, _id, nombreArchivo, res) => {
 
     if (tabla === 'hospitales') {
         hospitalModel.findById(_id, (err, hospital) => {
-            validarYeliminarImagen('./uploads/hospitales/' + hospital.img)
+            validarYeliminarImagen('../uploads/hospitales/' + hospital.img)
             hospital.img = nombreArchivo
-            hospital.save((err, hospitalctualizado) => {
+            hospital.save((err, hospitalActualizado) => {
                 if (err) return res.status(500).json({
                     success: false,
                     mensaje: 'Ocurrió un error al actualizar la imagen del hospital',
@@ -119,7 +119,7 @@ let subirPorTabla = (tabla, _id, nombreArchivo, res) => {
                 return res.status(200).json({
                     success: true,
                     mensaje: 'Hospital actualizado',
-                    hospitalctualizado
+                    hospitalActualizado
                 })
             })
         })

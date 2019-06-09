@@ -33,9 +33,34 @@ app.get('/', (req, res, next) => {
 })
 
 /**
+ * Obtener un médico por ID
+ */
+app.get('/:id', authMiddleware.verificaToken, (req, res, next) => {
+    const _id = req.params.id
+
+    medicoModel
+        .findOne({ _id: _id })
+        .populate('usuario', 'nombre email')
+        .populate('hospital')
+        .exec((err, medico) => {
+            if (err) return res.status(500).json({ success: false, mensaje: 'Error al cargar el medico', err })
+            if (!medico) {
+                return res.status(404).json({
+                    success: false,
+                    mensaje: 'No existe un médico con ese ID'
+                })
+            }
+            return res.status(201).json({
+                success: true,
+                medico
+            })
+        })
+})
+
+/**
  * Agregar un nuevo medico
  */
-app.post('/agregar', authMiddleware.verificaToken, (req, res, next) => {
+app.post('/agregar', [authMiddleware.verificaToken, authMiddleware.verificaAdminRole], (req, res, next) => {
     const body = req.body
     const medico = new medicoModel({
         nombre: body.nombre,
@@ -66,6 +91,7 @@ app.put('/actualizar', authMiddleware.verificaToken, (req, res, next) => {
         }
 
         medico.nombre = body.nombre
+        medico.hospital = body.hospital;
         medico.img = body.img
 
         medico.save((err, rs) => {
@@ -82,9 +108,8 @@ app.put('/actualizar', authMiddleware.verificaToken, (req, res, next) => {
 /**
  * Eliminar un medico
  */
-app.delete('/eliminar', authMiddleware.verificaToken, (req, res, next) => {
-    const body = req.body,
-        _id = body._id
+app.delete('/eliminar/:id', [authMiddleware.verificaToken, authMiddleware.verificaAdminRole], (req, res, next) => {
+    const _id = req.params.id
 
     medicoModel.findByIdAndRemove(_id, (err, rs) => {
         if (err) return res.status(500).json({ success: false, mensaje: 'Error al eliminar el medico', err })

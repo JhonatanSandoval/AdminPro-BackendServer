@@ -9,6 +9,13 @@ let app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+const fileupload = require('express-fileupload')
+app.use(fileupload())
+
+// CORS
+const cors = require('cors')
+app.use(cors())
+
 
 // db connection
 const dbName = 'hospitalDB'

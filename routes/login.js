@@ -12,6 +12,22 @@ const { OAuth2Client } = require('google-auth-library');
 const CLIENT_ID = configGoogleSignIn.CLIENT_ID
 const client = new OAuth2Client(CLIENT_ID);
 
+const auth = require('../middlewares/auth')
+
+/**
+ * Renovación de token - jwt
+ */
+app.get('/renueva-token', [auth.verificaToken], (req, res) => {
+
+	let token = jwt.sign({ usuario: req.usuarioToken }, configJwt.jwtSeed, {
+		expiresIn: '365d' // 365 dias
+	})
+
+	return res.status(200)
+		.json({ success: true, usuario: req.usuarioToken, token })
+})
+
+
 /**
  * Autenticación interna
  */
@@ -37,7 +53,7 @@ app.post('/', (req, res) => {
 		// crear un token
 		let token = jwt.sign(
 			{ usuario: usuario }, configJwt.jwtSeed, {
-				expiresIn: 14400 // 4 hours
+				expiresIn: '30d'
 			})
 
 		usuario.password = null
@@ -46,7 +62,8 @@ app.post('/', (req, res) => {
 			success: true,
 			mensaje: 'Login POST correcto',
 			token,
-			usuario
+			usuario,
+			menu: obtenerMenu(usuario.role)
 		})
 	})
 
@@ -104,11 +121,11 @@ app.post('/google', async (req, res, next) => {
 
 				// crear un token
 				let token = jwt.sign({ usuario: usuarioRegistrado }, configJwt.jwtSeed, {
-					expiresIn: 14400 // 4 hours
+					expiresIn: '365d' // 4 hours
 				})
 
 				usuarioRegistrado.password = null
-				return res.status(200).json({ success: true, token, usuarioRegistrado })
+				return res.status(200).json({ success: true, token, usuarioRegistrado, menu: obtenerMenu(usuarioRegistrado.role) })
 			})
 
 		} else {
@@ -118,17 +135,46 @@ app.post('/google', async (req, res, next) => {
 			} else {
 				// crear un token
 				let token = jwt.sign({ usuario: usuario }, configJwt.jwtSeed, {
-					expiresIn: 14400 // 4 hours
+					expiresIn: '365d' // 4 hours
 				})
 
 				usuario.password = null
-				return res.status(200).json({ success: true, token, usuario })
+				return res.status(200).json({ success: true, token, usuario, menu: obtenerMenu(usuario.role) })
 			}
-
 		}
 	})
-
 })
+
+let obtenerMenu = (role) => {
+	let menu = [
+		{
+			titulo: 'Principal',
+			icono: 'mdi mdi-gauge',
+			submenu: [
+				{ titulo: 'Dashboard', url: '/dashboard' },
+				{ titulo: 'ProgressBar', url: '/progress' },
+				{ titulo: 'Graficas', url: '/graficas1' },
+				{ titulo: 'Promesas', url: '/promesas' },
+				{ titulo: 'RxJs', url: '/rxjs' }
+			]
+		},
+		{
+			titulo: 'Mantenimientos',
+			icono: 'mdi mdi-folder-lock-open',
+			submenu: [
+				//{ titulo: 'Usuarios', url: '/usuarios' },
+				{ titulo: 'Hospitales', url: '/hospitales' },
+				{ titulo: 'Médicos', url: '/medicos' }
+			]
+		}
+	];
+
+	if (role === 'ADMIN_ROLE') {
+		menu[1].submenu.unshift({ titulo: 'Usuarios', url: '/usuarios' })
+	}
+
+	return menu
+}
 
 
 module.exports = app

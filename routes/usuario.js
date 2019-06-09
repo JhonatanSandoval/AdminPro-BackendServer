@@ -35,7 +35,7 @@ app.get('/', (req, res, next) => {
 /**
  * Agregar un nuevo usuario
  */
-app.post('/agregar', authMiddleware.verificaToken, (req, res, next) => {
+app.post('/agregar', (req, res, next) => {
 
 	const body = req.body
 	const usuario = new usuarioModel({
@@ -56,7 +56,7 @@ app.post('/agregar', authMiddleware.verificaToken, (req, res, next) => {
 /**
  * Actualizar un usuario existente
  */
-app.put('/actualizar', authMiddleware.verificaToken, (req, res, next) => {
+app.put('/actualizar', [authMiddleware.verificaToken, authMiddleware.verificaAdminRole], (req, res, next) => {
 	const body = req.body
 
 	usuarioModel.findById(body._id, (err, usuario) => {
@@ -86,9 +86,8 @@ app.put('/actualizar', authMiddleware.verificaToken, (req, res, next) => {
 /**
  * Eliminar un usuario
  */
-app.delete('/eliminar', authMiddleware.verificaToken, (req, res, next) => {
-	const body = req.body,
-		_id = body._id
+app.delete('/eliminar/:id', [authMiddleware.verificaToken, authMiddleware.verificaAdminRole], (req, res, next) => {
+	const body = req.body, _id = req.params.id
 
 	usuarioModel.findByIdAndRemove(_id, (err, rs) => {
 		if (err) return res.status(500).json({ success: false, mensaje: 'Error al eliminar al usuario', err })

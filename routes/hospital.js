@@ -33,6 +33,20 @@ app.get('/', (req, res, next) => {
 })
 
 /**
+ * Obtener un hospital por ID
+ */
+app.get('/:id', authMiddleware.verificaToken, (req, res, next) => {
+    const _id = req.params.id
+    hospitalModel.findOne({ _id: _id }, (err, hospital) => {
+        if (err) return res.status(500).json({ success: false, mensaje: 'Error al crear el hospital', err })
+        return res.status(201).json({
+            success: true,
+            hospital
+        })
+    })
+})
+
+/**
  * Agregar un nuevo hospital
  */
 app.post('/agregar', authMiddleware.verificaToken, (req, res, next) => {
@@ -80,9 +94,9 @@ app.put('/actualizar', authMiddleware.verificaToken, (req, res, next) => {
 /**
  * Eliminar un hospital
  */
-app.delete('/eliminar', authMiddleware.verificaToken, (req, res, next) => {
-    const body = req.body,
-        _id = body._id
+app.delete('/eliminar/:id', authMiddleware.verificaToken, (req, res, next) => {
+    const _id = req.params.id
+    console.log('_id', _id);
 
     hospitalModel.findByIdAndRemove(_id, (err, rs) => {
         if (err) return res.status(500).json({ success: false, mensaje: 'Error al eliminar el hospital', err })
